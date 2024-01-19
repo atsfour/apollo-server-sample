@@ -7,25 +7,42 @@ const typeDefs = loadSchemaSync("./schema.graphql", {
   loaders: [new GraphQLFileLoader()],
 });
 
-const data = [
-  {
-    id: "person1",
-    name: "John Doe",
-    friends: [],
-  },
-  {
-    id: "person2",
-    name: "Nanashi",
-    friends: [],
-  },
+interface Person {
+  id: string;
+  name: string;
+}
+
+const persons = [
+  { id: "person1", name: "Alice" },
+  { id: "person2", name: "Bob" },
+  { id: "person3", name: "Charlie" },
+  { id: "person4", name: "Dave" },
 ];
+
+const friendships = [
+  { personId: "person1", friendId: "person2" },
+  { personId: "person1", friendId: "person3" },
+  { personId: "person2", friendId: "person1" },
+  { personId: "person3", friendId: "person1" },
+];
+
+const resolveFriends = (person: Person) => {
+  console.log(`Resolving friends for ${person.id}`)
+  return friendships
+  .filter((fs) => fs.personId === person.id)
+  .map((fs) => persons.find(p => p.id === fs.friendId))
+}
+
 
 // Resolvers define how to fetch the types defined in your schema.
 // This resolver retrieves books from the "books" array above.
 const resolvers = {
   Query: {
-    persons: () => data,
+    persons: () => persons,
   },
+  Person: {
+    friends: (parent: Person) => resolveFriends(parent)
+  }
 };
 
 // The ApolloServer constructor requires two parameters: your schema
