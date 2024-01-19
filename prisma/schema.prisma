@@ -1,0 +1,30 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Person {
+  id      String       @id @db.VarChar(255)
+  name    String       @db.VarChar(255)
+  persons Friendship[] @relation("person")
+  friends Friendship[] @relation("friend")
+
+  @@map("person")
+}
+
+model Friendship {
+  person   Person @relation("person", fields: [personId], references: [id])
+  personId String @map("person_id") @db.VarChar(255)
+  friend   Person @relation("friend", fields: [friendId], references: [id])
+  friendId String @map("friend_id") @db.VarChar(255)
+
+  @@id([personId, friendId])
+  @@map("friendship")
+}

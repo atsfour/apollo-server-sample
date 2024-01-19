@@ -6,25 +6,33 @@
   "scripts": {
     "compile": "tsc",
     "start": "npm run compile && node ./dist/index.js",
-    "lint-fix": "eslint --cache --fix src/ && prettier --write src/"
+    "format": "prettier . --write && prisma format",
+    "check": "prettier . --check && prisma validate"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "dependencies": {
-    "@apollo/server": "^4.9.5",
+    "@apollo/server": "^4.10.0",
     "@graphql-tools/graphql-file-loader": "^8.0.0",
     "@graphql-tools/load": "^8.0.1",
+    "@prisma/client": "^5.8.1",
     "graphql": "^16.8.1"
   },
   "devDependencies": {
-    "@types/node": "^20.10.5",
-    "@typescript-eslint/eslint-plugin": "^6.16.0",
-    "@typescript-eslint/parser": "^6.16.0",
+    "@types/node": "^20.11.5",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
-    "prettier": "^3.1.1",
+    "npm-check-updates": "^16.14.12",
+    "prettier": "^3.2.4",
+    "prisma": "^5.8.1",
+    "tsx": "^4.7.0",
     "typescript": "^5.3.3"
   }
 }
