@@ -2,57 +2,32 @@ import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
 import { loadSchemaSync } from "@graphql-tools/load";
+import { PersonRepository } from "./repository/person.js";
 
 const typeDefs = loadSchemaSync("./schema.graphql", {
   loaders: [new GraphQLFileLoader()],
 });
 
-interface Person {
-  id: string;
-  name: string;
+interface ContextValue {
+  dataSources: {
+    personRepository: PersonRepository;
+  };
 }
-
-const persons = [
-  { id: "person1", name: "Alice" },
-  { id: "person2", name: "Bob" },
-  { id: "person3", name: "Charlie" },
-  { id: "person4", name: "Dave" },
-];
-
-const friendships = [
-  { personId: "person1", friendId: "person2" },
-  { personId: "person1", friendId: "person3" },
-  { personId: "person2", friendId: "person1" },
-  { personId: "person3", friendId: "person1" },
-];
-
-const resolvePersons = (name?: string) => {
-  return persons
-  .filter((p) => name ? p.name.match(name) : true)
-}
-
-const resolveFriends = (person: Person) => {
-  console.log(`Resolving friends for ${person.id}`)
-  return friendships
-  .filter((fs) => fs.personId === person.id)
-  .map((fs) => persons.find(p => p.id === fs.friendId))
-}
-
 
 // Resolvers define how to fetch the types defined in your schema.
 // This resolver retrieves books from the "books" array above.
 const resolvers = {
   Query: {
-    persons: (_, {name}) => resolvePersons(name),
+    persons: (_, {name}, {dataSources}) => dataSources.personRepository.findAll(name),
   },
   Person: {
-    friends: (parent: Person) => resolveFriends(parent)
+    friends: (parent, _, {dataSources}) => dataSources.personRepository.findFriendsByPerson(parent),
   }
 };
 
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.
-const server = new ApolloServer({
+const server = new ApolloServer<ContextValue>({
   typeDefs,
   resolvers,
 });
@@ -63,6 +38,13 @@ const server = new ApolloServer({
 //  3. prepares your app to handle incoming requests
 const { url } = await startStandaloneServer(server, {
   listen: { port: 4000 },
+  context: async () => {
+    return {
+      dataSources: {
+        personRepository: new PersonRepository(),
+      }
+    }
+  }
 });
 
 console.log(`🚀  Server ready at: ${url}`);
