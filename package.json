@@ -7,7 +7,8 @@
     "compile": "tsc",
     "start": "npm run compile && node ./dist/index.js",
     "format": "prettier . --write && prisma format",
-    "check": "prettier . --check && prisma validate"
+    "check": "prettier . --check && prisma validate",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +25,9 @@
     "graphql": "^16.8.1"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/typescript": "4.0.1",
+    "@graphql-codegen/typescript-resolvers": "4.0.1",
     "@types/node": "^20.11.5",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",

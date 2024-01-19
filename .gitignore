@@ -43,3 +43,4 @@ packages/server/src/generated/packageVersion.ts
 .env
 .eslintcache
 /slide
+/src/generated

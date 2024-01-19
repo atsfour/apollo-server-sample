@@ -3,6 +3,7 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
 import { loadSchemaSync } from "@graphql-tools/load";
 import { PersonRepository } from "./repository/person.js";
+import { Resolvers } from "./generated/graphql.js";
 
 const typeDefs = loadSchemaSync("./schema.graphql", {
   loaders: [new GraphQLFileLoader()],
@@ -16,7 +17,7 @@ interface ContextValue {
 
 // Resolvers define how to fetch the types defined in your schema.
 // This resolver retrieves books from the "books" array above.
-const resolvers = {
+const resolvers: Resolvers = {
   Query: {
     persons: (_, {name}, {dataSources}) => dataSources.personRepository.findAll(name),
   },
