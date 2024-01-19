@@ -26,6 +26,11 @@ const friendships = [
   { personId: "person3", friendId: "person1" },
 ];
 
+const resolvePersons = (name?: string) => {
+  return persons
+  .filter((p) => name ? p.name.match(name) : true)
+}
+
 const resolveFriends = (person: Person) => {
   console.log(`Resolving friends for ${person.id}`)
   return friendships
@@ -38,7 +43,7 @@ const resolveFriends = (person: Person) => {
 // This resolver retrieves books from the "books" array above.
 const resolvers = {
   Query: {
-    persons: () => persons,
+    persons: (_, {name}) => resolvePersons(name),
   },
   Person: {
     friends: (parent: Person) => resolveFriends(parent)

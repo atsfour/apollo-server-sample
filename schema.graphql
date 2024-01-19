@@ -1,5 +1,5 @@
 type Query {
-  persons: [Person!]!
+  persons(name: String): [Person!]!
 }
 
 type Person {
